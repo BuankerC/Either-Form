@@ -1,10 +1,20 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .forms import QuestionForm
+from .models import Question
 # Create your views here.
 
 
 def index(request):
-    return render(request, 'questions/index.html')
+    questions = Question.objects.all()
+    return render(request, 'questions/index.html', {'questions': questions})
+
+
+def detail(request, id):
+    question = get_object_or_404(Question, id=id)
+    context = {
+        'question': question
+    }
+    return render(request, 'questions/detail.html', context)
 
 
 def create(request):
