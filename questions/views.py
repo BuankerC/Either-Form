@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .forms import QuestionForm
+from .forms import QuestionForm, ChoiceForm
 from .models import Question
 # Create your views here.
 
@@ -11,8 +11,10 @@ def index(request):
 
 def detail(request, id):
     question = get_object_or_404(Question, id=id)
+    choice_form = ChoiceForm()
     context = {
-        'question': question
+        'question': question,
+        'choice_form': choice_form,
     }
     return render(request, 'questions/detail.html', context)
 
@@ -74,3 +76,17 @@ def delete(request, id):
         return redirect('questions:index')
     else:
         return redirect('questions:detail', id)
+
+
+def choice_create(request, id):
+    question = get_object_or_404(Question, id=id)
+    if request.method == "POST":
+        choice_form = ChoiceForm(request. POST)
+        if choice_form.is_valid():
+            choice = choice_form.save(commit=False)
+            choice.question = question
+            choice_form.save()
+
+            return redirect("questions:detail", id)
+    else:
+        pass
